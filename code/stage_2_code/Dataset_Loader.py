@@ -6,6 +6,7 @@ Concrete IO class for a specific dataset
 # License: TBD
 
 from code.base_class.dataset import dataset
+import csv
 
 
 class Dataset_Loader(dataset):
@@ -21,10 +22,9 @@ class Dataset_Loader(dataset):
         X = []
         y = []
         f = open(self.dataset_source_folder_path + self.dataset_source_file_name, 'r')
-        for line in f:
-            line = line.strip('\n')
-            elements = [int(i) for i in line.split(' ')]
-            X.append(elements[1:])
-            y.append(elements[1])
+        f_read = csv.reader(f)
+        for line in f_read:
+            X.append([int(i) for i in line[1:]])
+            y.append(int(line[1]))
         f.close()
         return {'X': X, 'y': y}
