@@ -15,9 +15,9 @@ import numpy as np
 class Method_MLP(method, nn.Module):
     data = None
     # it defines the max rounds to train the model
-    max_epoch = 500
+    max_epoch = 300
     # it defines the learning rate for gradient descent based optimizer for model learning
-    learning_rate = 0.1
+    learning_rate = 0.01
 
     # it defines the the MLP model architecture, e.g.,
     # how many layers, size of variables in each layer, activation function, etc.
@@ -26,13 +26,13 @@ class Method_MLP(method, nn.Module):
         method.__init__(self, mName, mDescription)
         nn.Module.__init__(self)
         # check here for nn.Linear doc: https://pytorch.org/docs/stable/generated/torch.nn.Linear.html
-        self.fc_layer_1 = nn.Linear(784, 512)  # Was (4,4) -> this is hidden layer 1
+        self.fc_layer_1 = nn.Linear(784, 784)  # Was (4,4) -> this is hidden layer 1
         # check here for nn.ReLU doc: https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html
-        self.activation_func_1 = nn.Sigmoid()
-        self.fc_layer_2 = nn.Linear(512, 512)  # was (4,2) -> hidden layer 2
+        self.activation_func_1 = nn.ReLU()
+        self.fc_layer_2 = nn.Linear(784, 392)  # was (4,2) -> hidden layer 2
         # check here for nn.Softmax doc: https://pytorch.org/docs/stable/generated/torch.nn.Softmax.html
-        self.activation_func_2 = nn.Sigmoid()  # TODO: activation function?
-        self.fc_layer_3 = nn.Linear(512, 10)  # -> output layer
+        self.activation_func_2 = nn.ReLU()  # TODO: activation function?
+        self.fc_layer_3 = nn.Linear(392, 10)  # -> output layer
         # check here for nn.ReLU doc: https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html
         self.activation_func_3 = nn.Softmax(dim=1)
 
