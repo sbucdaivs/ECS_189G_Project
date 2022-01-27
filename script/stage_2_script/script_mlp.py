@@ -14,9 +14,17 @@ if 1:
     #------------------------------------------------------
 
     # ---- objection initialization setction ---------------
-    data_obj = Dataset_Loader('MNIST', 'Handwritten digits.')  # TODO: where did it load data?
-    data_obj.dataset_source_folder_path = '../../data/stage_2_data/'
-    data_obj.dataset_source_file_name = 'train.csv'
+    # training set
+    train_data_obj = Dataset_Loader('MNIST_training', 'Handwritten digits.')
+    train_data_obj.dataset_source_folder_path = '../../data/stage_2_data/'
+    train_data_obj.dataset_source_file_name = 'train.csv'
+    #     train_data_obj.dataset_source_file_name = 'train_small.csv'
+
+    # testing set
+    test_data_obj = Dataset_Loader('MNIST_testing', 'Handwritten digits.')
+    test_data_obj.dataset_source_folder_path = '../../data/stage_2_data/'
+    test_data_obj.dataset_source_file_name = 'test.csv'
+
 
     method_obj = Method_MLP('multi-layer perceptron', '')
 
@@ -32,7 +40,7 @@ if 1:
 
     # ---- running section ---------------------------------
     print('************ Start ************')
-    setting_obj.prepare(data_obj, method_obj, result_obj, evaluate_obj)
+    setting_obj.prepare(train_data_obj, method_obj, result_obj, evaluate_obj)
     setting_obj.print_setup_summary()
     mean_score, std_score = setting_obj.load_run_save_evaluate()
     print('************ Overall Performance ************')
