@@ -17,8 +17,8 @@ if 1:
     # training set
     train_data_obj = Dataset_Loader('MNIST_training', 'Handwritten digits.')
     train_data_obj.dataset_source_folder_path = '../../data/stage_2_data/'
-    train_data_obj.dataset_source_file_name = 'train.csv'
-    #     train_data_obj.dataset_source_file_name = 'train_small.csv'
+    # train_data_obj.dataset_source_file_name = 'train.csv'
+    train_data_obj.dataset_source_file_name = 'train_small.csv'
 
     # testing set
     test_data_obj = Dataset_Loader('MNIST_testing', 'Handwritten digits.')
@@ -48,6 +48,7 @@ if 1:
     print('************ Finish ************')
     # ------------------------------------------------------
     # TODO: Do overall testing on test.csv
+    print("MLP Accuracy on test dataset: {}".format(setting_obj.eval_test(test_data_obj)))
     
 
     

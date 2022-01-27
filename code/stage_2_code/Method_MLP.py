@@ -17,7 +17,7 @@ class Method_MLP(method, nn.Module):
     # it defines the max rounds to train the model
     max_epoch = 500
     # it defines the learning rate for gradient descent based optimizer for model learning
-    learning_rate = 1e-3
+    learning_rate = 0.1
 
     # it defines the the MLP model architecture, e.g.,
     # how many layers, size of variables in each layer, activation function, etc.
@@ -26,13 +26,13 @@ class Method_MLP(method, nn.Module):
         method.__init__(self, mName, mDescription)
         nn.Module.__init__(self)
         # check here for nn.Linear doc: https://pytorch.org/docs/stable/generated/torch.nn.Linear.html
-        self.fc_layer_1 = nn.Linear(784, 784)  # Was (4,4) -> this is hidden layer 1
+        self.fc_layer_1 = nn.Linear(784, 512)  # Was (4,4) -> this is hidden layer 1
         # check here for nn.ReLU doc: https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html
-        self.activation_func_1 = nn.ReLU()
-        self.fc_layer_2 = nn.Linear(784, 394)  # was (4,2) -> hidden layer 2
+        self.activation_func_1 = nn.Sigmoid()
+        self.fc_layer_2 = nn.Linear(512, 512)  # was (4,2) -> hidden layer 2
         # check here for nn.Softmax doc: https://pytorch.org/docs/stable/generated/torch.nn.Softmax.html
-        self.activation_func_2 = nn.ReLU()  # TODO: activation function?
-        self.fc_layer_3 = nn.Linear(394, 10)  # -> output layer
+        self.activation_func_2 = nn.Sigmoid()  # TODO: activation function?
+        self.fc_layer_3 = nn.Linear(512, 10)  # -> output layer
         # check here for nn.ReLU doc: https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html
         self.activation_func_3 = nn.Softmax(dim=1)
 
@@ -56,9 +56,8 @@ class Method_MLP(method, nn.Module):
 
     def train(self, X, y):
         # check here for the torch.optim doc: https://pytorch.org/docs/stable/optim.html
-        optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
-        # check here for the gradient init doc: https://pytorch.org/docs/stable/generated/torch.optim.Optimizer.zero_grad.html
-        optimizer.zero_grad()
+        optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate)
+
         # check here for the nn.CrossEntropyLoss doc: https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html
         loss_function = nn.CrossEntropyLoss()
         # for training accuracy investigation purpose
@@ -68,6 +67,9 @@ class Method_MLP(method, nn.Module):
         # we don't do mini-batch, we use the whole input as one batch
         # you can try to split X and y into smaller-sized batches by yourself
         for epoch in range(self.max_epoch): # you can do an early stop if self.max_epoch is too much...
+            # check here for the gradient init doc: https://pytorch.org/docs/stable/generated/torch.optim.Optimizer.zero_grad.html
+            optimizer.zero_grad()
+
             # get the output, we need to covert X into torch.tensor so pytorch algorithm can operate on it
             y_pred = self.forward(torch.FloatTensor(np.array(X)))
             # convert y to torch.tensor as well

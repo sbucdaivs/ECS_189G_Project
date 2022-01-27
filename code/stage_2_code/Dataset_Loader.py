@@ -25,6 +25,6 @@ class Dataset_Loader(dataset):
         f_read = csv.reader(f)
         for line in f_read:
             X.append([int(i) for i in line[1:]])
-            y.append(int(line[1]))
+            y.append(int(line[0]))
         f.close()
         return {'X': X, 'y': y}

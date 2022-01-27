@@ -7,6 +7,7 @@ Concrete SettingModule class for a specific experimental SettingModule
 
 from code.base_class.setting import setting
 from sklearn.model_selection import KFold
+from sklearn.metrics import accuracy_score
 import numpy as np
 
 class Setting_KFold_CV(setting):
@@ -40,5 +41,10 @@ class Setting_KFold_CV(setting):
             score_list.append(self.evaluate.evaluate())
         
         return np.mean(score_list), np.std(score_list)
+
+    def eval_test(self, test_dataset):
+        test_data = test_dataset.load()
+        y_pred = self.method.test(test_data['X'])
+        return accuracy_score(test_data['y'], y_pred)
 
         
