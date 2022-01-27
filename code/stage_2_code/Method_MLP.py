@@ -26,12 +26,15 @@ class Method_MLP(method, nn.Module):
         method.__init__(self, mName, mDescription)
         nn.Module.__init__(self)
         # check here for nn.Linear doc: https://pytorch.org/docs/stable/generated/torch.nn.Linear.html
-        self.fc_layer_1 = nn.Linear(784, 784)  # Was (4,4)
+        self.fc_layer_1 = nn.Linear(784, 784)  # Was (4,4) -> this is hidden layer 1
         # check here for nn.ReLU doc: https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html
         self.activation_func_1 = nn.ReLU()
-        self.fc_layer_2 = nn.Linear(784, 394)  # was (4,2)
+        self.fc_layer_2 = nn.Linear(784, 394)  # was (4,2) -> hidden layer 2
         # check here for nn.Softmax doc: https://pytorch.org/docs/stable/generated/torch.nn.Softmax.html
-        self.activation_func_2 = nn.Softmax(dim=1)  # TODO: change it?
+        self.activation_func_2 = nn.ReLU()  # TODO: activation function?
+        self.fc_layer_3 = nn.Linear(394, 10)  # -> output layer
+        # check here for nn.ReLU doc: https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html
+        self.activation_func_3 = nn.Softmax(dim=1)
 
     # it defines the forward propagation function for input x
     # this function will calculate the output layer by layer
@@ -39,12 +42,13 @@ class Method_MLP(method, nn.Module):
     def forward(self, x):
         '''Forward propagation'''
         # hidden layer embeddings
-        h = self.activation_func_1(self.fc_layer_1(x))
-        # outout layer result
+        h0 = self.activation_func_1(self.fc_layer_1(x))
+        h1 = self.activation_func_2(self.fc_layer_2(h0))
+        # output layer result
         # self.fc_layer_2(h) will be a nx2 tensor
         # n (denotes the input instance number): 0th dimension; 2 (denotes the class number): 1st dimension
         # we do softmax along dim=1 to get the normalized classification probability distributions for each instance
-        y_pred = self.activation_func_2(self.fc_layer_2(h))
+        y_pred = self.activation_func_3(self.fc_layer_3(h1))
         return y_pred
 
     # backward error propagation will be implemented by pytorch automatically
