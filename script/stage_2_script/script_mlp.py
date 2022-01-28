@@ -6,6 +6,7 @@ from code.stage_2_code.Evaluate_Accuracy import Evaluate_Accuracy
 import numpy as np
 import torch
 
+
 #---- Multi-Layer Perceptron script ----
 if 1:
     #---- parameter section -------------------------------
@@ -51,6 +52,7 @@ if 1:
     print('************ Finish ************')
     # ------------------------------------------------------
     # TODO: Do overall testing on test.csv
+
     scores = setting_obj.eval_test(test_data_obj)
     accuracy = scores[0]
     precision = scores[1][0]

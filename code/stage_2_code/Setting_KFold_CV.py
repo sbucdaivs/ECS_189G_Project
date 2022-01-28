@@ -4,12 +4,14 @@ Concrete SettingModule class for a specific experimental SettingModule
 
 # Copyright (c) 2017-Current Jiawei Zhang <jiawei@ifmlab.org>
 # License: TBD
-
+from code.stage_2_code.Method_MLP import Method_MLP
 from code.base_class.setting import setting
 from sklearn.model_selection import KFold
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import roc_curve
 from sklearn.metrics import precision_recall_fscore_support
 import numpy as np
+import matplotlib.pyplot as plt
 
 class Setting_KFold_CV(setting):
     fold = 3
@@ -26,6 +28,8 @@ class Setting_KFold_CV(setting):
         precision_list = []
         recall_list = []
         f1_list=[]
+        epoch_list = []
+        loss_list =[]
         for train_index, test_index in kf.split(loaded_data['X']):
             fold_count += 1
             print('************ Fold:', fold_count, '************')
@@ -47,6 +51,17 @@ class Setting_KFold_CV(setting):
             precision_list.append(scores[1])
             recall_list.append(scores[2])
             f1_list.append(scores[3])
+
+        # plot
+        epoch = Method_MLP.max_epoch
+        plt.plot(Method_MLP.epoch_list[0:epoch], Method_MLP.loss_list[0:epoch], "r", label = "Fold 1")
+        plt.plot(Method_MLP.epoch_list[epoch:2*epoch+1], Method_MLP.loss_list[epoch:2*epoch+1], "g", label = "Fold 2")
+        plt.plot(Method_MLP.epoch_list[2*epoch+1:], Method_MLP.loss_list[2*epoch+1:], "b" , label = "Fold 3")
+        plt.legend(loc="upper right")
+        plt.xlabel("epoch")
+        plt.ylabel("loss")
+        plt.title("Training Convergence Plot")
+        plt.show()
 
         return np.mean(score_list), np.std(score_list), np.mean(precision_list), np.std(precision_list),\
             np.mean(recall_list), np.std(recall_list), np.mean(f1_list), np.std(f1_list)

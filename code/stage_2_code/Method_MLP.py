@@ -10,7 +10,7 @@ from code.stage_2_code.Evaluate_Accuracy import Evaluate_Accuracy
 import torch
 from torch import nn
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 class Method_MLP(method, nn.Module):
     data = None
@@ -18,6 +18,8 @@ class Method_MLP(method, nn.Module):
     max_epoch = 300
     # it defines the learning rate for gradient descent based optimizer for model learning
     learning_rate = 0.25
+    epoch_list = []
+    loss_list = []
 
     # it defines the the MLP model architecture, e.g.,
     # how many layers, size of variables in each layer, activation function, etc.
@@ -55,6 +57,7 @@ class Method_MLP(method, nn.Module):
     # so we don't need to define the error backpropagation function here
 
     def train(self, X, y):
+
         # check here for the torch.optim doc: https://pytorch.org/docs/stable/optim.html
         optimizer = torch.optim.SGD(self.parameters(), lr=self.learning_rate)
 
@@ -66,6 +69,7 @@ class Method_MLP(method, nn.Module):
         # it will be an iterative gradient updating process
         # we don't do mini-batch, we use the whole input as one batch
         # you can try to split X and y into smaller-sized batches by yourself
+
         for epoch in range(self.max_epoch): # you can do an early stop if self.max_epoch is too much...
             # check here for the gradient init doc: https://pytorch.org/docs/stable/generated/torch.optim.Optimizer.zero_grad.html
             optimizer.zero_grad()
@@ -84,13 +88,17 @@ class Method_MLP(method, nn.Module):
             # update the variables according to the optimizer and the gradients calculated by the above loss.backward function
             optimizer.step()
 
+            self.epoch_list.append(epoch)
+            self.loss_list.append(train_loss.item())
             if epoch%100 == 0:
                 accuracy_evaluator.data = {'true_y': y_true, 'pred_y': y_pred.max(1)[1]}
                 scores = accuracy_evaluator.evaluate()
                 print('Epoch:', epoch, 'Accuracy:', scores[0], 'Loss:', train_loss.item())
-                # print('Precision:', scores[1], 'Recall:', scores[2],
-                #       'F1 score:', scores[3])
-    
+        # self.epoch_list = epoch_list
+        # self.loss_list = loss_list
+        # plt.plot(epoch_list, loss_list)
+        # plt.show()
+
     def test(self, X):
         # do the testing, and result the result
         y_pred = self.forward(torch.FloatTensor(np.array(X)))
