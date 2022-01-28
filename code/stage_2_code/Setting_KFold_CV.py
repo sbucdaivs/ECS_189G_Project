@@ -8,7 +8,6 @@ from code.stage_2_code.Method_MLP import Method_MLP
 from code.base_class.setting import setting
 from sklearn.model_selection import KFold
 from sklearn.metrics import accuracy_score
-from sklearn.metrics import roc_curve
 from sklearn.metrics import precision_recall_fscore_support
 import numpy as np
 import matplotlib.pyplot as plt
@@ -61,6 +60,7 @@ class Setting_KFold_CV(setting):
         plt.xlabel("epoch")
         plt.ylabel("loss")
         plt.title("Training Convergence Plot")
+        plt.savefig("Training Convergence Plot.png")
         plt.show()
 
         return np.mean(score_list), np.std(score_list), np.mean(precision_list), np.std(precision_list),\

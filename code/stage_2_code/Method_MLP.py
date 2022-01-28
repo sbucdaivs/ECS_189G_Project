@@ -20,6 +20,7 @@ class Method_MLP(method, nn.Module):
     learning_rate = 0.25
     epoch_list = []
     loss_list = []
+    num_hidden_layer = 1
 
     # it defines the the MLP model architecture, e.g.,
     # how many layers, size of variables in each layer, activation function, etc.
