@@ -8,6 +8,7 @@ Concrete SettingModule class for a specific experimental SettingModule
 from code.base_class.setting import setting
 from sklearn.model_selection import KFold
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import precision_recall_fscore_support
 import numpy as np
 
 class Setting_KFold_CV(setting):
@@ -22,6 +23,9 @@ class Setting_KFold_CV(setting):
         
         fold_count = 0
         score_list = []
+        precision_list = []
+        recall_list = []
+        f1_list=[]
         for train_index, test_index in kf.split(loaded_data['X']):
             fold_count += 1
             print('************ Fold:', fold_count, '************')
@@ -38,13 +42,17 @@ class Setting_KFold_CV(setting):
             self.result.save()
             
             self.evaluate.data = learned_result
-            score_list.append(self.evaluate.evaluate())
-        
-        return np.mean(score_list), np.std(score_list)
+            scores = self.evaluate.evaluate()
+            score_list.append(scores[0])
+            precision_list.append(scores[1])
+            recall_list.append(scores[2])
+            f1_list.append(scores[3])
+
+        return np.mean(score_list), np.std(score_list), np.mean(precision_list), np.std(precision_list),\
+            np.mean(recall_list), np.std(recall_list), np.mean(f1_list), np.std(f1_list)
 
     def eval_test(self, test_dataset):
         test_data = test_dataset.load()
         y_pred = self.method.test(test_data['X'])
-        return accuracy_score(test_data['y'], y_pred)
-
-        
+        return accuracy_score(test_data['y'], y_pred), \
+               precision_recall_fscore_support(test_data['y'], y_pred, average='weighted')

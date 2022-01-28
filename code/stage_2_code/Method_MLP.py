@@ -17,7 +17,7 @@ class Method_MLP(method, nn.Module):
     # it defines the max rounds to train the model
     max_epoch = 300
     # it defines the learning rate for gradient descent based optimizer for model learning
-    learning_rate = 0.01
+    learning_rate = 0.25
 
     # it defines the the MLP model architecture, e.g.,
     # how many layers, size of variables in each layer, activation function, etc.
@@ -28,11 +28,11 @@ class Method_MLP(method, nn.Module):
         # check here for nn.Linear doc: https://pytorch.org/docs/stable/generated/torch.nn.Linear.html
         self.fc_layer_1 = nn.Linear(784, 784)  # Was (4,4) -> this is hidden layer 1
         # check here for nn.ReLU doc: https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html
-        self.activation_func_1 = nn.ReLU()
-        self.fc_layer_2 = nn.Linear(784, 392)  # was (4,2) -> hidden layer 2
-        # check here for nn.Softmax doc: https://pytorch.org/docs/stable/generated/torch.nn.Softmax.html
-        self.activation_func_2 = nn.ReLU()  # TODO: activation function?
-        self.fc_layer_3 = nn.Linear(392, 10)  # -> output layer
+        self.activation_func_1 = nn.Sigmoid()
+        # self.fc_layer_2 = nn.Linear(784, 392)  # was (4,2) -> hidden layer 2
+        # # check here for nn.Softmax doc: https://pytorch.org/docs/stable/generated/torch.nn.Softmax.html
+        # self.activation_func_2 = nn.Sigmoid()  # TODO: activation function?
+        self.fc_layer_3 = nn.Linear(784, 10)  # -> output layer
         # check here for nn.ReLU doc: https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html
         self.activation_func_3 = nn.Softmax(dim=1)
 
@@ -43,12 +43,12 @@ class Method_MLP(method, nn.Module):
         '''Forward propagation'''
         # hidden layer embeddings
         h0 = self.activation_func_1(self.fc_layer_1(x))
-        h1 = self.activation_func_2(self.fc_layer_2(h0))
+        # h1 = self.activation_func_2(self.fc_layer_2(h0))
         # output layer result
         # self.fc_layer_2(h) will be a nx2 tensor
         # n (denotes the input instance number): 0th dimension; 2 (denotes the class number): 1st dimension
         # we do softmax along dim=1 to get the normalized classification probability distributions for each instance
-        y_pred = self.activation_func_3(self.fc_layer_3(h1))
+        y_pred = self.activation_func_3(self.fc_layer_3(h0))
         return y_pred
 
     # backward error propagation will be implemented by pytorch automatically
@@ -86,7 +86,10 @@ class Method_MLP(method, nn.Module):
 
             if epoch%100 == 0:
                 accuracy_evaluator.data = {'true_y': y_true, 'pred_y': y_pred.max(1)[1]}
-                print('Epoch:', epoch, 'Accuracy:', accuracy_evaluator.evaluate(), 'Loss:', train_loss.item())
+                scores = accuracy_evaluator.evaluate()
+                print('Epoch:', epoch, 'Accuracy:', scores[0], 'Loss:', train_loss.item())
+                # print('Precision:', scores[1], 'Recall:', scores[2],
+                #       'F1 score:', scores[3])
     
     def test(self, X):
         # do the testing, and result the result

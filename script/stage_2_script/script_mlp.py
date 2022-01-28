@@ -42,13 +42,19 @@ if 1:
     print('************ Start ************')
     setting_obj.prepare(train_data_obj, method_obj, result_obj, evaluate_obj)
     setting_obj.print_setup_summary()
-    mean_score, std_score = setting_obj.load_run_save_evaluate()
+    mean_score, std_score, precision, std_pre, recall, std_recall, f1, std_f1 = setting_obj.load_run_save_evaluate()
     print('************ Overall Performance ************')
     print('MLP Accuracy: ' + str(mean_score) + ' +/- ' + str(std_score))
+    print('Precision:'+str(precision) +  ' +/- ' + str(std_pre))
+    print('Recall:' + str(recall) + ' +/- ' + str(std_recall))
+    print('F1 score:' + str(f1) + ' +/- ' + str(std_f1))
     print('************ Finish ************')
     # ------------------------------------------------------
     # TODO: Do overall testing on test.csv
-    print("MLP Accuracy on test dataset: {}".format(setting_obj.eval_test(test_data_obj)))
-    
-
-    
+    scores = setting_obj.eval_test(test_data_obj)
+    accuracy = scores[0]
+    precision = scores[1][0]
+    recall = scores[1][1]
+    f1 = scores[1][2]
+    print("MLP Accuracy on test dataset: {}".format(accuracy))
+    print("Precision:", precision, "Recall:", recall, "F1 score:", f1)
