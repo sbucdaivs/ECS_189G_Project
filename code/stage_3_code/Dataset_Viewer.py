@@ -7,9 +7,9 @@ if 1:
    f.close()
 
    print('training set size:', len(data['train']), 'testing set size:', len(data['test']))
-
-   for pair in data['train']:
-   #for pair in data['test']:
-       plt.imshow(pair['image'], cmap="Greys")
-       plt.show()
-       print(pair['label'])
+   #
+   # for pair in data['train']:
+   # #for pair in data['test']:
+   #     plt.imshow(pair['image'], cmap="Greys")
+   #     plt.show()
+   #     print(pair['label'])
