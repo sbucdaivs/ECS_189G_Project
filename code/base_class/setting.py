@@ -39,7 +39,7 @@ class setting:
         print('dataset:', self.dataset.dataset_name, ', method:', self.method.method_name,
               ', setting:', self.setting_name, ', result:', self.result.result_name,
               ', evaluation:', self.evaluate.evaluate_name)
-        print('k: ', self.fold, ',epoch: ', self.method.max_epoch, ', learning rate: ', self.method.learning_rate, 'MLP #of hidden layer(s): ', self.method.num_hidden_layer) # TODO: Formatting
+        print('k: ', self.fold, ',epoch: ', self.method.max_epoch, ', learning rate: ', self.method.learning_rate)
 
 
     @abc.abstractmethod
