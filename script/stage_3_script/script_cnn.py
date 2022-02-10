@@ -15,9 +15,9 @@ if 1:
 
     # ---- objection initialization section ---------------
     # training set
-    data_obj = Dataset_Loader('MNIST', 'Handwritten digits.')
+    data_obj = Dataset_Loader('ORL', 'Handwritten digits.')
     data_obj.dataset_source_folder_path = '../../data/stage_3_data/'
-    data_obj.dataset_source_file_name = 'MNIST'
+    data_obj.dataset_source_file_name = 'ORL'
     data_obj.pre_load()
 
     # TODO change the below to cnn

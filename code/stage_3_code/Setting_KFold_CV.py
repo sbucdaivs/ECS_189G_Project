@@ -32,8 +32,12 @@ class Setting_KFold_CV(setting):
         for train_index, test_index in kf.split(loaded_data['X']):
             fold_count += 1
             print('************ Fold:', fold_count, '************')
+
             X_train, X_test = np.array(loaded_data['X'])[train_index], np.array(loaded_data['X'])[test_index]
             y_train, y_test = np.array(loaded_data['y'])[train_index], np.array(loaded_data['y'])[test_index]
+            X_train = np.moveaxis(X_train,3,1)
+            X_test = np.moveaxis(X_test,3,1)
+            # fixed input size (sample x channels x height x weight)
 
             # run MethodModule
             self.method.data = {'train': {'X': X_train, 'y': y_train}, 'test': {'X': X_test, 'y': y_test}}
