@@ -30,37 +30,24 @@ class Method_CNN(method, nn.Module):
         method.__init__(self, mName, mDescription)
         nn.Module.__init__(self)
 
-        self.conv1 = nn.Conv2d(1, 16, 5, 1, 2)
+        # self.conv1 = nn.Conv2d(1, 16, 5, 1, 2)
+        self.conv1 = nn.Conv2d(3,6,5) # channel, out, kernel size
         self.pool = nn.MaxPool2d(2, 2)
-        self.conv2 = nn.Conv2d(16, 32, 5, 1, 2)
-        self.fc1 = nn.Linear(32 * 7 * 7, 10)
+        self.conv2 = nn.Conv2d(6, 16, 5)
+        self.fc1 = nn.Linear(8000, 120)
+        self.fc2 = nn.Linear(120, 84)
+        self.fc3 = nn.Linear(84, 10)
+        # self.pool = nn.MaxPool2d(2, 2)
+        # self.conv2 = nn.Conv2d(16, 32, 5, 1, 2)
+        # self.fc1 = nn.Linear(32 * 7 * 7, 10)
         # self.fc2 = nn.Linear(120, 84)
         # self.fc3 = nn.Linear(84, 10)
-        # check here for nn.Linear doc: https://pytorch.org/docs/stable/generated/torch.nn.Linear.html
-        # self.fc_layer_1 = nn.Linear(784, 784)  # Was (4,4) -> this is hidden layer 1
-        # # check here for nn.ReLU doc: https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html
-        # self.activation_func_1 = nn.Sigmoid()
-        # # self.fc_layer_2 = nn.Linear(784, 392)  # was (4,2) -> hidden layer 2
-        # # # check here for nn.Softmax doc: https://pytorch.org/docs/stable/generated/torch.nn.Softmax.html
-        # # self.activation_func_2 = nn.Sigmoid()  # TODO: activation function?
-        # self.fc_layer_3 = nn.Linear(784, 10)  # -> output layer
-        # # check here for nn.ReLU doc: https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html
-        # self.activation_func_3 = nn.Softmax(dim=1)
 
     # it defines the forward propagation function for input x
     # this function will calculate the output layer by layer
 
     def forward(self, x):
         '''Forward propagation'''
-        # # hidden layer embeddings
-        # h0 = self.activation_func_1(self.fc_layer_1(x))
-        # # h1 = self.activation_func_2(self.fc_layer_2(h0))
-        # # output layer result
-        # # self.fc_layer_2(h) will be a nx2 tensor
-        # # n (denotes the input instance number): 0th dimension; 2 (denotes the class number): 1st dimension
-        # # we do softmax along dim=1 to get the normalized classification probability distributions for each instance
-        # y_pred = self.activation_func_3(self.fc_layer_3(h0))
-        # return y_pred
         x = self.pool(F.relu(self.conv1(x)))
         x = self.pool(F.relu(self.conv2(x)))
         x = torch.flatten(x, 1) # flatten all dimensions except batch
@@ -93,7 +80,7 @@ class Method_CNN(method, nn.Module):
             optimizer.zero_grad()
 
             # get the output, we need to covert X into torch.tensor so pytorch algorithm can operate on it
-            y_pred = self.forward(torch.FloatTensor(np.array(X)).unsqueeze(1))
+            y_pred = self.forward(torch.FloatTensor(np.array(X)))
             # convert y to torch.tensor as well
             y_true = torch.LongTensor(np.array(y))
             # calculate the training loss
