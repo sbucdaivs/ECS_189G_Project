@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 
 class Setting_KFold_CV(setting):
-    fold = 3
+    fold = 5
 
     def load_run_save_evaluate_plot(self):
         # load dataset
@@ -62,7 +62,9 @@ class Setting_KFold_CV(setting):
 
     def eval_test(self, dataset):
         test_data = dataset.load('test')
-        y_pred = self.method.test(test_data['X'])
+        test_x = np.array(test_data['X'])
+        test_x = np.moveaxis(test_x,3,1)
+        y_pred = self.method.test(test_x)
         return accuracy_score(test_data['y'], y_pred), \
                precision_recall_fscore_support(test_data['y'], y_pred, average='weighted')
 
