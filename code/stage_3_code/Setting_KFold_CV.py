@@ -11,7 +11,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_recall_fscore_support
 import numpy as np
 import matplotlib.pyplot as plt
-
+from sklearn.metrics import classification_report
 
 class Setting_KFold_CV(setting):
     fold = 5
@@ -68,13 +68,20 @@ class Setting_KFold_CV(setting):
         return accuracy_score(test_data['y'], y_pred), \
                precision_recall_fscore_support(test_data['y'], y_pred, average='weighted')
 
+    def classification_report(self, dataset):
+        test_data = dataset.load('test')
+        test_x = np.array(test_data['X'])
+        test_x = np.moveaxis(test_x, 3, 1)
+        y_pred = self.method.test(test_x)
+        print(classification_report(test_data['y'], y_pred))
+
 
 def plot_training_convergence():
     epoch = Method_CNN.max_epoch
     plt.plot(Method_CNN.epoch_list[0:epoch], Method_CNN.loss_list[0:epoch], "r", label="Fold 1")
     plt.plot(Method_CNN.epoch_list[epoch:2 * epoch + 1], Method_CNN.loss_list[epoch:2 * epoch + 1], "g",
              label="Fold 2")
-    plt.plot(Method_CNN.epoch_list[2 * epoch + 1:], Method_CNN.loss_list[2 * epoch + 1:], "b", label="Fold 3")
+    plt.plot(Method_CNN.epoch_list[2 * epoch + 1:], Method_CNN.loss_list[2 * epoch + 1:], "b", label="Fold 3, 4, 5")
     plt.legend(loc="upper right")
     plt.xlabel("epoch")
     plt.ylabel("loss")

@@ -47,6 +47,7 @@ if 1:
     # ------------------------------------------------------
 
     scores = setting_obj.eval_test(data_obj)
+    setting_obj.classification_report(data_obj)
     accuracy = scores[0]
     precision = scores[1][0]
     recall = scores[1][1]
