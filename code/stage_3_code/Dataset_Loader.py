@@ -26,7 +26,7 @@ class Dataset_Loader(dataset):
         line: dict
         for line in self.data[dType]:
             X.append(line['image'])
-            y.append(line['label'])
+            y.append(line['label']-1)
 
 
         return {'X': X, 'y': y}
