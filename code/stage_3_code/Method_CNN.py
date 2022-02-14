@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 class Method_CNN(method, nn.Module):
     data = None
     # it defines the max rounds to train the model
-    max_epoch = 300
+    max_epoch = 500
     # it defines the learning rate for gradient descent based optimizer for model learning
     learning_rate = 0.001
     momentum = 0.9
@@ -46,6 +46,15 @@ class Method_CNN(method, nn.Module):
         # self.fc_layer_3 = nn.Linear(784, 10)  # -> output layer
         # # check here for nn.ReLU doc: https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html
         # self.activation_func_3 = nn.Softmax(dim=1)
+=======
+        nn.Module.__init__(self) #fx?
+        self.conv1 = nn.Conv2d(3, 6, 5)
+        self.pool = nn.MaxPool2d(2, 2)
+        self.conv2 = nn.Conv2d(6, 16, 5)
+        self.fc1 = nn.Linear(16 * 5 * 5, 240)
+        self.fc2 = nn.Linear(240, 120)
+        self.fc3 = nn.Linear(120, 10)
+>>>>>>> Stashed changes
 
     # it defines the forward propagation function for input x
     # this function will calculate the output layer by layer
@@ -64,9 +73,9 @@ class Method_CNN(method, nn.Module):
         x = self.pool(F.relu(self.conv1(x)))
         x = self.pool(F.relu(self.conv2(x)))
         x = torch.flatten(x, 1) # flatten all dimensions except batch
-        # x = F.relu(self.fc1(x))
-        # x = F.relu(self.fc2(x))
-        x = self.fc1(x)
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
         return x
 
     # backward error propagation will be implemented by pytorch automatically
