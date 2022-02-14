@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 
 class Setting_KFold_CV(setting):
-    fold = 3
+    fold = 5
 
     def load_run_save_evaluate_plot(self):
         # load dataset
