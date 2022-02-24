@@ -18,8 +18,10 @@ if 1:
     data_obj = Dataset_Loader('IMDB', 'Movie Review')
     data_obj.dataset_source_folder_path = '../../data/stage_4_data/text_classification/train_small'
     data_obj.load()
-
-
+    # testing set
+    test_data_obj = Dataset_Loader('IMDB', 'Movie Review Test')
+    test_data_obj.dataset_source_folder_path = '../../data/stage_4_data/text_classification/test_small'
+    test_data_obj.load()
 
     # method_obj = Method_CNN('Convolutional Neuron Network', '')
     #
