@@ -17,7 +17,8 @@ class Dataset_Loader(dataset):
     dataset_source_folder_path = None
     dataset_source_file_name = None
 
-    def __init__(self, dName=None, dDescription=None):
+    def __init__(self, dName=None, dDescription=None, type='classification'):
+        self.type = type
         super().__init__(dName, dDescription)
 
     all_text = [] # a list of all text, to count words and make vocab later
@@ -46,10 +47,9 @@ class Dataset_Loader(dataset):
             features[i, :] = np.array(new)
         return features
 
-    def load(self):
-        print('loading data...')
-        X_raw = [] # text
-        X = [] # encoded
+    def load_classification(self):
+        X_raw = []  # text
+        X = []  # encoded
         y = []
         directory = self.dataset_source_folder_path
         for label_type in ['neg', 'pos']:
@@ -69,8 +69,8 @@ class Dataset_Loader(dataset):
         count_words = Counter(words)
         total_words = len(words)
         sorted_words = count_words.most_common(total_words)
-        vocab_to_int = {w: i+1 for i, (w, c) in enumerate(sorted_words)} # start w/ 1, 0 for padding
-        for review in X_raw: # encode text
+        vocab_to_int = {w: i + 1 for i, (w, c) in enumerate(sorted_words)}  # start w/ 1, 0 for padding
+        for review in X_raw:  # encode text
             r = [vocab_to_int[w] for w in review.split()]
             X.append(r)
 
@@ -79,3 +79,8 @@ class Dataset_Loader(dataset):
         X = self.pad_features(X, 500)
 
         return {'X': X, 'y': y}
+
+    def load(self):
+        print('loading data...')
+        if self.type == 'classification':
+            return self.load_classification()
