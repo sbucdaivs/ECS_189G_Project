@@ -16,6 +16,7 @@ class Dataset_Loader(dataset):
     data = None
     dataset_source_folder_path = None
     dataset_source_file_name = None
+    vocab_size = 0
 
     def __init__(self, dName=None, dDescription=None):
         super().__init__(dName, dDescription)
@@ -70,10 +71,10 @@ class Dataset_Loader(dataset):
         total_words = len(words)
         sorted_words = count_words.most_common(total_words)
         vocab_to_int = {w: i+1 for i, (w, c) in enumerate(sorted_words)} # start w/ 1, 0 for padding
+        self.vocab_size = len(vocab_to_int)
         for review in X_raw: # encode text
             r = [vocab_to_int[w] for w in review.split()]
             X.append(r)
-
         reviews_len = [len(x) for x in X]
         X = [X[i] for i, l in enumerate(reviews_len) if l > 0]
         X = self.pad_features(X, 500)
