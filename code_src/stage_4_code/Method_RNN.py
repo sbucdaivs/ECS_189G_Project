@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
-from code.stage_4_code.Dataset_Loader import Dataset_Loader
-from code.base_class.method import method
+from code_src.stage_4_code.Dataset_Loader import Dataset_Loader
+from code_src.base_class.method import method
 import numpy as np
 
 
@@ -11,20 +11,19 @@ class Method_RNN(nn.Module):
     """
     data = None
     # TODO: fix this later
-    vocab_size = Dataset_Loader.vocab_size + 1
-    vocab_size = 5048
+    vocab_size = 0
     output_size = 1
     embedding_dim = 500
     hidden_dim = 256
     n_layers = 2
     dropout = nn.Dropout(0.3)
 
-    def __init__(self, mName, mDescription):
+    def __init__(self, mName, mDescription, vocab_size):
         method.__init__(self, mName, mDescription)
         nn.Module.__init__(self)
 
         # embedding and LSTM layers
-
+        self.vocab_size = vocab_size
         self.embedding = nn.Embedding(self.vocab_size, self.embedding_dim)
         self.lstm = nn.LSTM(self.embedding_dim, self.hidden_dim, self.n_layers,
                             dropout=0.5, batch_first=True)
