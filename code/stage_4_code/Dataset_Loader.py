@@ -9,6 +9,8 @@ from code.base_class.dataset import dataset
 from string import punctuation
 from collections import Counter
 import numpy as np
+import csv
+from nltk.tokenize import word_tokenize
 
 import os
 
@@ -81,7 +83,34 @@ class Dataset_Loader(dataset):
 
         return {'X': X, 'y': y}
 
+    def index_words(self, text):
+        words = word_tokenize(text)
+        word_counts = Counter(words)
+        return sorted(word_counts, key=word_counts.get, reverse=True)
+
+    def load_generation(self):
+        X_raw = []  # text
+        X = []  # encoded
+        y = []
+        directory = self.dataset_source_folder_path
+        file_name_with_full_path = os.path.join(directory, 'data')
+
+        data = []
+        with open(file_name_with_full_path, newline='') as f:
+            reader = csv.reader(f)
+            for line in reader:
+                data.append(line[1])
+        data = data[1:]
+        # print(word_tokenize(data[0]))
+        print(self.index_words(' '.join(data)))
+
+        return data
+
+
     def load(self):
         print('loading data...')
         if self.type == 'classification':
             return self.load_classification()
+        else:
+            print('using generation loader')
+            return self.load_generation()
