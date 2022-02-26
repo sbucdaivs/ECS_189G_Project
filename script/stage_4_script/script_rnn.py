@@ -1,12 +1,12 @@
 from code.stage_4_code.Dataset_Loader import Dataset_Loader
 from code.stage_4_code.Method_RNN import Method_RNN
-# from code.stage_4_code.Result_Saver import Result_Saver
+from code.stage_4_code.Result_Saver import Result_Saver
 from code.stage_4_code.Setting_KFold_CV import Setting_KFold_CV
-# from code.stage_3_code.Evaluate_Accuracy import Evaluate_Accuracy
+from code.stage_4_code.Evaluate_Accuracy import Evaluate_Accuracy
 import numpy as np
 import torch
 
-# ---- Convolution Neuron Network script ----
+# ---- Recurrent Neuron Network script ----
 if 1:
     # ---- parameter section -------------------------------
     np.random.seed(2)
@@ -16,14 +16,14 @@ if 1:
     # ---- objection initialization section ---------------
     # training set
     data_obj = Dataset_Loader('IMDB', 'Movie Review')
-    data_obj.dataset_source_folder_path = '../../data/stage_4_data/text_classification/train_small'
+    data_obj.dataset_source_folder_path = '../../data/stage_4_data/text_classification/'
     data_obj.load()
     # testing set
     test_data_obj = Dataset_Loader('IMDB', 'Movie Review Test')
     test_data_obj.dataset_source_folder_path = '../../data/stage_4_data/text_classification/test_small'
     test_data_obj.load()
 
-    method_obj = Method_RNN('Convolutional Neuron Network', '')
+    method_obj = Method_RNN('Recurrent Neuron Network', '')
     #
     # result_obj = Result_Saver('saver', '')
     # result_obj.result_destination_folder_path = '../../result/stage_3_result/CNN_'
