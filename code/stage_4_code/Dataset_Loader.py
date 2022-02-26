@@ -19,9 +19,10 @@ class Dataset_Loader(dataset):
     dataset_source_folder_path = None
     dataset_source_file_name = None
     vocab_size = 0
-
     def __init__(self, dName=None, dDescription=None, type='classification'):
         self.type = type
+        self.num_words = None
+
         super().__init__(dName, dDescription)
 
     all_text = [] # a list of all text, to count words and make vocab later
@@ -99,10 +100,19 @@ class Dataset_Loader(dataset):
         with open(file_name_with_full_path, newline='') as f:
             reader = csv.reader(f)
             for line in reader:
-                data.append(line[1])
+                data.append(line[1].lower())
         data = data[1:]
         # print(word_tokenize(data[0]))
-        print(self.index_words(' '.join(data)))
+        indexed = self.index_words(' '.join(data))
+        self.num_words = len(indexed)
+
+        self.index_to_word = {index: word for index, word in enumerate(indexed)}
+        self.word_to_index = {word: index for index, word in enumerate(indexed)}
+
+        self.words_indexes = [self.word_to_index[w] for w in self.words]
+
+        for i in range():
+            pass
 
         return data
 
