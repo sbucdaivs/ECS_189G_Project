@@ -9,8 +9,6 @@ from code.base_class.dataset import dataset
 from string import punctuation
 from collections import Counter
 import numpy as np
-import csv
-from nltk.tokenize import word_tokenize
 
 import os
 
@@ -19,9 +17,9 @@ class Dataset_Loader(dataset):
     dataset_source_folder_path = None
     dataset_source_file_name = None
     vocab_size = 0
-
     def __init__(self, dName=None, dDescription=None, type='classification'):
         self.type = type
+
         super().__init__(dName, dDescription)
 
     all_text = [] # a list of all text, to count words and make vocab later
@@ -50,7 +48,8 @@ class Dataset_Loader(dataset):
             features[i, :] = np.array(new)
         return features
 
-    def load_classification(self):
+    def load(self):
+        print('loading data...')
         X_raw = []  # text
         X = []  # encoded
         y = []
@@ -72,9 +71,9 @@ class Dataset_Loader(dataset):
         count_words = Counter(words)
         total_words = len(words)
         sorted_words = count_words.most_common(total_words)
-        vocab_to_int = {w: i+1 for i, (w, c) in enumerate(sorted_words)} # start w/ 1, 0 for padding
+        vocab_to_int = {w: i + 1 for i, (w, c) in enumerate(sorted_words)}  # start w/ 1, 0 for padding
         self.vocab_size = len(vocab_to_int)
-        for review in X_raw: # encode text
+        for review in X_raw:  # encode text
             r = [vocab_to_int[w] for w in review.split()]
             X.append(r)
         reviews_len = [len(x) for x in X]
@@ -82,44 +81,3 @@ class Dataset_Loader(dataset):
         X = self.pad_features(X, 500)
 
         return {'X': X, 'y': y}
-
-    def index_words(self, text):
-        words = word_tokenize(text)
-        word_counts = Counter(words)
-        return sorted(word_counts, key=word_counts.get, reverse=True)
-
-    def load_generation(self):
-        X_raw = []  # text
-        X = []  # encoded
-        y = []
-        directory = self.dataset_source_folder_path
-        file_name_with_full_path = os.path.join(directory, 'data')
-
-        data = []
-        with open(file_name_with_full_path, newline='') as f:
-            reader = csv.reader(f)
-            for line in reader:
-                data.append(line[1].lower())
-        data = data[1:]
-        # print(word_tokenize(data[0]))
-        indexed = self.index_words(' '.join(data))
-        self.num_words = len(indexed)
-
-        self.index_to_word = {index: word for index, word in enumerate(indexed)}
-        self.word_to_index = {word: index for index, word in enumerate(indexed)}
-
-        self.words_indexes = [self.word_to_index[w] for w in self.words]
-
-        for i in range():
-            pass
-
-        return data
-
-
-    def load(self):
-        print('loading data...')
-        if self.type == 'classification':
-            return self.load_classification()
-        else:
-            print('using generation loader')
-            return self.load_generation()
