@@ -1,7 +1,7 @@
 import pickle
 import matplotlib.pyplot as plt
 
-from code.base_class.dataset import dataset
+from code_src.base_class.dataset import dataset
 
 
 class Dataset_Loader(dataset):

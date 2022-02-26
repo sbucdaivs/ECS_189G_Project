@@ -4,8 +4,8 @@ Concrete SettingModule class for a specific experimental SettingModule
 
 # Copyright (c) 2017-Current Jiawei Zhang <jiawei@ifmlab.org>
 # License: TBD
-from code.stage_4_code.Method_RNN import Method_RNN
-from code.base_class.setting import setting
+from code_src.stage_4_code.Method_RNN import Method_RNN
+from code_src.base_class.setting import setting
 from sklearn.model_selection import KFold
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_recall_fscore_support

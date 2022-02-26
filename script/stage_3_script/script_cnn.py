@@ -1,8 +1,8 @@
-from code.stage_3_code.Dataset_Loader import Dataset_Loader
-from code.stage_3_code.Method_CNN import Method_CNN
-from code.stage_3_code.Result_Saver import Result_Saver
-from code.stage_3_code.Setting_KFold_CV import Setting_KFold_CV
-from code.stage_3_code.Evaluate_Accuracy import Evaluate_Accuracy
+from code_src.stage_3_code.Dataset_Loader import Dataset_Loader
+from code_src.stage_3_code.Method_CNN import Method_CNN
+from code_src.stage_3_code.Result_Saver import Result_Saver
+from code_src.stage_3_code.Setting_KFold_CV import Setting_KFold_CV
+from code_src.stage_3_code.Evaluate_Accuracy import Evaluate_Accuracy
 import numpy as np
 import torch
 

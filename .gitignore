@@ -4,7 +4,7 @@ data/
 result/
 result/stage_1_result/DT_prediction_result_1
 result/stage_1_result/MLP_prediction_result_1
-code/base_class/__pycache__/__init__.cpython-39.pyc
+code_src/base_class/__pycache__/__init__.cpython-39.pyc
 /result/stage_1_result/
 *.pyc
 result/stage_1_result/DT_prediction_result_1

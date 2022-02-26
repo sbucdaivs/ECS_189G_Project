@@ -5,7 +5,7 @@ Concrete SettingModule class for a specific experimental SettingModule
 # Copyright (c) 2017-Current Jiawei Zhang <jiawei@ifmlab.org>
 # License: TBD
 
-from code.base_class.setting import setting
+from code_src.base_class.setting import setting
 from sklearn.model_selection import KFold
 import numpy as np
 
@@ -41,4 +41,3 @@ class Setting_KFold_CV(setting):
         
         return np.mean(score_list), np.std(score_list)
 
-        

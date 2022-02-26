@@ -5,7 +5,7 @@ Concrete SettingModule class for a specific experimental SettingModule
 # Copyright (c) 2017-Current Jiawei Zhang <jiawei@ifmlab.org>
 # License: TBD
 
-from code.base_class.setting import setting
+from code_src.base_class.setting import setting
 from sklearn.model_selection import train_test_split
 import numpy as np
 
@@ -31,4 +31,3 @@ class Setting_Train_Test_Split(setting):
         
         return self.evaluate.evaluate(), None
 
-        

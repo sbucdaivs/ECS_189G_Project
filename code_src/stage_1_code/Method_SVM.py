@@ -5,7 +5,7 @@ Concrete MethodModule class for a specific learning MethodModule
 # Copyright (c) 2017-Current Jiawei Zhang <jiawei@ifmlab.org>
 # License: TBD
 
-from code.base_class.method import method
+from code_src.base_class.method import method
 from sklearn import svm
 
 
@@ -32,4 +32,3 @@ class Method_SVM(method):
         print('--start testing...')
         pred_y = self.test(model, self.data['test']['X'])
         return {'pred_y': pred_y, 'true_y': self.data['test']['y']}
-            
