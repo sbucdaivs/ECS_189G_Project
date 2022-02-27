@@ -22,15 +22,19 @@ class Dataset_Loader(dataset):
 
         super().__init__(dName, dDescription)
 
-    all_text = [] # a list of all text, to count words and make vocab later
-    def load_file(self, filename):
+    all_text_train = [] # a list of all text, to count words and make vocab later
+    all_text_test = [] # a list of all text, to count words and make vocab later
+    def load_file(self, filename, dtype):
         file = open(filename, 'r')
         review = file.read()
         file.close()
 
         review = review.lower()
         review = ''.join([c for c in review if c not in punctuation])
-        self.all_text.append(review)
+        if dtype == 'train':
+            self.all_text_train.append(review)
+        else:
+            self.all_text_test.append(review)
         return review
 
     def pad_features(self, reviews_int, seq_length):
@@ -49,30 +53,41 @@ class Dataset_Loader(dataset):
         return features
 
     def load(self):
-        print('loading data...')
+        train_data, alltext1 = self.load_helper('train')
+        test_data, alltext2 = self.load_helper('test')
+        all_text = (alltext1 + ' ' + alltext2)
+        self.vocab_size = len(Counter(all_text.split()))
+        return {'train': train_data, 'test': test_data}
+
+
+    def load_helper(self, data_type):
+        print('loading {} data...'.format(data_type))
         X_raw = []  # text
         X = []  # encoded
         y = []
         directory = self.dataset_source_folder_path
         for label_type in ['neg', 'pos']:
-            data_folder = os.path.join(directory, label_type)
+            data_folder = os.path.join(directory, data_type, label_type)
             for root, dirs, files in os.walk(data_folder):
                 for fname in files:
                     if fname.endswith(".txt"):
                         file_name_with_full_path = os.path.join(root, fname)
-                        clean_review = self.load_file(str(file_name_with_full_path))
+                        clean_review = self.load_file(str(file_name_with_full_path), data_type)
                         X_raw.append(clean_review)
                         if label_type == 'neg':
                             y.append(0)
                         else:
                             y.append(1)
-        all_text_2 = ' '.join(self.all_text)
+        if data_type == 'train':
+            all_text_2 = ' '.join(self.all_text_train)
+        else:
+            all_text_2 = ' '.join(self.all_text_test)
         words = all_text_2.split()
         count_words = Counter(words)
         total_words = len(words)
         sorted_words = count_words.most_common(total_words)
         vocab_to_int = {w: i + 1 for i, (w, c) in enumerate(sorted_words)}  # start w/ 1, 0 for padding
-        self.vocab_size = len(vocab_to_int)
+        # self.vocab_size = len(vocab_to_int)
         for review in X_raw:  # encode text
             r = [vocab_to_int[w] for w in review.split()]
             X.append(r)
@@ -80,4 +95,4 @@ class Dataset_Loader(dataset):
         X = [X[i] for i, l in enumerate(reviews_len) if l > 0]
         X = self.pad_features(X, 500)
 
-        return {'X': X, 'y': y}
+        return ({'X': X, 'y': y}, all_text_2)

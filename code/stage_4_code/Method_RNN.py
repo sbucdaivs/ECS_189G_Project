@@ -11,21 +11,19 @@ class Method_RNN(nn.Module):
     """
     data = None
     # TODO: fix this later
-    vocab_size = Dataset_Loader.vocab_size + 1
-    vocab_size = 5048
+    # vocab_size = 0
     output_size = 1
     embedding_dim = 500
     hidden_dim = 256
     n_layers = 2
     dropout = nn.Dropout(0.3)
 
-    def __init__(self, mName, mDescription):
+    def __init__(self, mName, mDescription, vocab_size):
         method.__init__(self, mName, mDescription)
         nn.Module.__init__(self)
-
+        # print(vocab_size)
         # embedding and LSTM layers
-
-        self.embedding = nn.Embedding(self.vocab_size, self.embedding_dim)
+        self.embedding = nn.Embedding(vocab_size, self.embedding_dim)
         self.lstm = nn.LSTM(self.embedding_dim, self.hidden_dim, self.n_layers,
                             dropout=0.5, batch_first=True)
 

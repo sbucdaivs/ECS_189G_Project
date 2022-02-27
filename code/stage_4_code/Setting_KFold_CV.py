@@ -19,7 +19,7 @@ class Setting_KFold_CV(setting):
 
     def load_run_save_evaluate_plot(self):
         # load dataset
-        loaded_data = self.dataset.load()
+        loaded_data = self.dataset.load()['train']
         # print(loaded_data['X'][0])
         kf = KFold(n_splits=self.fold, shuffle=True)
 
