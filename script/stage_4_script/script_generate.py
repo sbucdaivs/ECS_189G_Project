@@ -11,10 +11,12 @@ if 1:
     np.random.seed(2)
     torch.manual_seed(2)
 
+
     # ---- objection initialization section ---------------
     # training set
     data_obj = Dataset_Loader('Jokes', '-', type='generation')
     data_obj.dataset_source_folder_path = '../../data/stage_4_data/text_generation/'
     data_obj.load()
 
-    method_obj = Method_Generate('Convolutional Neuron Network', '', data_obj.num_words)
+    method_obj = Method_Generate('Convolutional Neuron Network', '', data_obj)
+    method_obj.train()
