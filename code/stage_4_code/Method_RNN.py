@@ -9,155 +9,82 @@ class Method_RNN(nn.Module):
     """
     The RNN model that will be used to perform Sentiment analysis.
     """
-    data = None
-    # TODO: fix this later
-    # vocab_size = 0
-    output_size = 1
-    embedding_dim = 500
-    hidden_dim = 256
-    n_layers = 2
-    dropout = nn.Dropout(0.3)
+    INPUT_DIM = 0  # len(TEXT.vocab)
+    EMBEDDING_DIM = 500
+    HIDDEN_DIM = 256
+    OUTPUT_DIM = 1
 
-    def __init__(self, mName, mDescription, vocab_size):
-        method.__init__(self, mName, mDescription)
-        nn.Module.__init__(self)
-        # print(vocab_size)
-        # embedding and LSTM layers
-        self.embedding = nn.Embedding(vocab_size, self.embedding_dim)
-        self.lstm = nn.LSTM(self.embedding_dim, self.hidden_dim, self.n_layers,
-                            dropout=0.5, batch_first=True)
+    def __init__(self, vocab_size: int):
+        super().__init__()
 
-        # linear and sigmoid layers
-        self.fc = nn.Linear(self.hidden_dim, self.output_size)
+        self.INPUT_DIM = vocab_size
+        self.embedding = nn.Embedding(self.INPUT_DIM, self.EMBEDDING_DIM)
+        self.rnn = nn.RNN(self.EMBEDDING_DIM, self.HIDDEN_DIM)
+        self.fc = nn.Linear(self.HIDDEN_DIM, self.OUTPUT_DIM)
         self.sig = nn.Sigmoid()
 
-    def forward(self, x, hidden):
-        """
-        Perform a forward pass of our model on some input and hidden state.
-        """
-        batch_size = x.size(0)
+    def forward(self, text):
 
-        # embeddings and lstm_out
-        embeds = self.embedding(x)
-        lstm_out, hidden = self.lstm(embeds, hidden)
+        # text = [sent len, batch size]
 
-        # stack up lstm outputs
-        lstm_out = lstm_out.contiguous().view(-1, self.hidden_dim)
+        embedded = self.embedding(text)
 
-        # dropout and fully-connected layer
-        out = self.dropout(lstm_out)
-        out = self.fc(out)
-        # sigmoid function
-        sig_out = self.sig(out)
+        # embedded = [sent len, batch size, emb dim]
 
-        # reshape to be batch_size first
-        sig_out = sig_out.view(batch_size, -1)
-        sig_out = sig_out[:, -1]  # get last batch of labels
+        output, hidden = self.rnn(embedded)
 
-        # return last sigmoid output and hidden state
-        return sig_out, hidden
+        # output = [sent len, batch size, hid dim]
+        # hidden = [1, batch size, hid dim]
 
-    def train(self, train_loader, test_loader):
+        assert torch.equal(output[-1, :, :], hidden.squeeze(0))
+        sig_out = self.sig(self.fc(hidden.squeeze(0)))
+        return sig_out
+
+    def train(self, train_loader):
         lr = 0.001
         criterion = nn.BCELoss()
-        optimizer = torch.optim.Adam(self.parameters(), lr=lr)
+        optimizer = torch.optim.SGD(self.parameters(), lr=lr)
         epochs = 4  # 3-4 is approx where I noticed the validation loss stop decreasing
-        counter = 0
-        print_every = 1
-        clip = 5  # gradient clipping
 
         for e in range(epochs):
-            # initialize hidden state
-            h = self.init_hidden(2) # batch size =4
-
-            # batch loop
+            print('epoch {} training...'.format(e))
             for inputs, labels in train_loader:
-                counter += 1
-
-                # Creating new variables for the hidden state, otherwise
-                # we'd backprop through the entire training history
-                h = tuple([each.data for each in h])
-
-                # zero accumulated gradients
                 optimizer.zero_grad()
-
-                # get the output from the model
-                inputs = inputs.type(torch.LongTensor)
-                output, h = self.forward(inputs, h)
-
-                loss = criterion(output.squeeze(), labels.float())
+                predictions = self(inputs).squeeze(1)
+                loss = criterion(predictions, labels.float())
                 loss.backward()
-                # `clip_grad_norm` helps prevent the exploding gradient problem in RNNs / LSTMs.
-                nn.utils.clip_grad_norm_(self.parameters(), clip)
                 optimizer.step()
 
-                if True :
-                    # Get validation loss
-                    val_h = self.init_hidden(2)
-                    val_losses = []
-
-                    for inputs, labels in test_loader:
-
-                        # Creating new variables for the hidden state, otherwise
-                        # we'd backprop through the entire training history
-                        val_h = tuple([each.data for each in val_h])
-
-                        inputs = inputs.type(torch.LongTensor)
-                        output, val_h = self(inputs, val_h)
-                        val_loss = criterion(output.squeeze(), labels.float())
-
-                        val_losses.append(val_loss.item())
-
-                    print("Epoch: {}/{}...".format(e + 1, epochs),
-                          "Step: {}...".format(counter),
-                          "Loss: {:.6f}...".format(loss.item()),
-                          "Val Loss: {:.6f}".format(np.mean(val_losses)))
+    #
+    # def test(selfself, test_loader):
 
 
-
-    def init_hidden(self, batch_size):
-        ''' Initializes hidden state '''
-        # Create two new tensors with sizes n_layers x batch_size x hidden_dim,
-        # initialized to zero, for hidden state and cell state of LSTM
-        weight = next(self.parameters()).data
-
-        hidden = (weight.new(self.n_layers, batch_size, self.hidden_dim).zero_(),
-            weight.new(self.n_layers, batch_size, self.hidden_dim).zero_())
-        return hidden
+    # def init_hidden(self, batch_size):
+    #     ''' Initializes hidden state '''
+    #     # Create two new tensors with sizes n_layers x batch_size x hidden_dim,
+    #     # initialized to zero, for hidden state and cell state of LSTM
+    #     weight = next(self.parameters()).data
+    #
+    #     hidden = (weight.new(self.n_layers, batch_size, self.hidden_dim).zero_(),
+    #               weight.new(self.n_layers, batch_size, self.hidden_dim).zero_())
+    #     return hidden
 
     def run(self):
         print('method running...')
         print('--start training...')
-        self.train(self.data['train'], self.data['test'])
+        self.train(self.data['train'])
         # print('--start testing...')
         # pred_y = self.test(self.data['test'])
         # return {'pred_y': pred_y, 'true_y': self.data['test']['y']}
-    # SentimentLSTM(
-    #     (embedding): Embedding(74073, 400)
-    # (lstm): LSTM(400, 256, num_layers=2, batch_first=True, dropout=0.5)
-    # (dropout): Dropout(p=0.3)
-    # (fc): Linear(in_features=256, out_features=1, bias=True)
-    # (sig): Sigmoid()
-    # )
 
-    # def train(self):
-    #     lr = 0.001
-    #
-    #     criterion = nn.BCELoss()
-    #     optimizer = torch.optim.Adam(net.parameters(), lr=lr)
-    #
-    #     # training params
-    #
-    #     epochs = 4  # 3-4 is approx where I noticed the validation loss stop decreasing
-    #
-    #     counter = 0
-    #     print_every = 100
-    #     clip = 5  # gradient clipping
-    #
-    #
-    #     net.train()
-    #     # train for some number of epochs
-    #     for e in range(epochs):
-    #         # initialize hidden state
-    #         h = net.init_hidden(batch_size)
-    #
+
+def binary_accuracy(preds, y):
+    """
+    Returns accuracy per batch, i.e. if you get 8/10 right, this returns 0.8, NOT 8
+    """
+
+    # round predictions to the closest integer
+    rounded_preds = torch.round(torch.sigmoid(preds))
+    correct = (rounded_preds == y).float()  # convert into float for division
+    acc = correct.sum() / len(correct)
+    return acc
